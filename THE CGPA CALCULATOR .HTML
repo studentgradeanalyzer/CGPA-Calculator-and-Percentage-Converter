@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGPA Calculator - Calculate Your Grades with Style</title>
+    <meta name="description" content="Modern, interactive CGPA calculator with percentage converter. Fast, accurate, and stylish grade calculations for students. Dark mode supported.">
+    <meta name="keywords" content="CGPA calculator, grade calculator, percentage converter, student tools, academic calculator">
+    <meta name="author" content="CGPA Calculator">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --bg-light: #ffffff;
+            --bg-dark: #0f0f23;
+            --card-light: rgba(255, 255, 255, 0.95);
+            --card-dark: rgba(30, 30, 60, 0.95);
+            --text-light: #333333;
+            --text-dark: #ffffff;
+            --border-light: rgba(0, 0, 0, 0.1);
+            --border-dark: rgba(255, 255, 255, 0.2);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-light);
+            transition: all 0.3s ease;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body.dark {
+            background: var(--bg-dark);
+            color: var(--text-dark);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-gradient);
+            opacity: 0.1;
+            z-index: -1;
+            animation: gradientShift 10s ease-in-out infinite;
+        }
+
+        body.dark::before {
+            opacity: 0.3;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            25% { transform: translateX(-5px) translateY(-5px); }
+            50% { transform: translateX(5px) translateY(5px); }
+            75% { transform: translateX(-3px) translateY(3px); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.5)); }
+            to { filter: drop-shadow(0 0 30px rgba(118, 75, 162, 0.8)); }
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
+
+        .dark-mode-toggle {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--accent-gradient);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .dark-mode-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.6);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: var(--card-light);
+            border: 2px solid var(--border-light);
+            padding: 15px 30px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: var(--text-light);
+            backdrop-filter: blur(10px);
+        }
+
+        body.dark .nav-btn {
+            background: var(--card-dark);
+            border-color: var(--border-dark);
+            color: var(--text-dark);
+        }
+
+        .nav-btn.active {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card {
+            background: var(--card-light);
+            border-radius: 25px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-light);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.dark .card {
+            background: var(--card-dark);
+            border-color: var(--border-dark);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.15);
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 16px;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+
+        body.dark .form-group label {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-group label::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-gradient);
+            transition: width 0.3s ease;
+        }
+
+        .form-group:focus-within label::after {
+            width: 100%;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 20px;
+            font-size: 20px;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            opacity: 0.6;
+        }
+
+        .input-wrapper:focus-within .input-icon {
+            opacity: 1;
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 18px 25px;
+            border: 3px solid transparent;
+            border-radius: 20px;
+            font-size: 17px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(240, 240, 255, 0.8));
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        body.dark .form-group input,
+        body.dark .form-group select {
+            background: linear-gradient(145deg, rgba(40, 40, 80, 0.9), rgba(30, 30, 60, 0.8));
+            color: var(--text-dark);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border: 3px solid transparent;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 1), rgba(248, 250, 255, 0.95));
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3), 0 15px 40px rgba(102, 126, 234, 0.2);
+            transform: translateY(-3px) scale(1.02);
+        }
+
+        body.dark .form-group input:focus,
+        body.dark .form-group select:focus {
+            background: linear-gradient(145deg, rgba(50, 50, 90, 1), rgba(40, 40, 80, 0.95));
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.4), 0 15px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(102, 126, 234, 0.6);
+            font-weight: 400;
+            transition: all 0.3s ease;
+        }
+
+        body.dark .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-group input:focus::placeholder {
+            color: rgba(102, 126, 234, 0.8);
+            transform: translateX(5px);
+        }
+
+        .btn {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--secondary-gradient);
+        }
+
+        .btn-success {
+            background: var(--success-gradient);
+        }
+
+        .btn-accent {
+            background: var(--accent-gradient);
+        }
+
+        .sgpa-input {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 255, 0.9));
+            border-radius: 25px;
+            border: 3px solid transparent;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 15px 45px rgba(102, 126, 234, 0.15), 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark .sgpa-input {
+            background: linear-gradient(135deg, rgba(40, 40, 80, 0.95), rgba(30, 30, 60, 0.9));
+            box-shadow: 0 15px 45px rgba(102, 126, 234, 0.25), 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .sgpa-input::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.15), transparent);
+            transition: left 0.8s ease;
+            z-index: 1;
+        }
+
+        .sgpa-input::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #f5576c);
+            border-radius: 25px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sgpa-input:hover::before {
+            left: 100%;
+        }
+
+        .sgpa-input:hover::after {
+            opacity: 0.7;
+        }
+
+        .sgpa-input:hover {
+            transform: translateY(-8px) scale(1.03);
+            border: 3px solid rgba(102, 126, 234, 0.4);
+            box-shadow: 0 25px 60px rgba(102, 126, 234, 0.3), 0 10px 30px rgba(118, 75, 162, 0.2);
+        }
+
+        .sgpa-input:focus-within {
+            transform: translateY(-10px) scale(1.05);
+            border: 3px solid rgba(102, 126, 234, 0.6);
+            box-shadow: 0 30px 80px rgba(102, 126, 234, 0.4), 0 15px 40px rgba(118, 75, 162, 0.3);
+        }
+
+        .sgpa-input:focus-within::after {
+            opacity: 1;
+        }
+
+        .sgpa-input input {
+            flex: 1;
+            min-width: 280px;
+            padding: 20px 30px;
+            border: 3px solid transparent;
+            border-radius: 18px;
+            font-size: 18px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 1), rgba(250, 252, 255, 0.95));
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            box-shadow: inset 0 3px 12px rgba(102, 126, 234, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05);
+            position: relative;
+            z-index: 2;
+        }
+
+        body.dark .sgpa-input input {
+            background: linear-gradient(145deg, rgba(60, 60, 100, 1), rgba(50, 50, 90, 0.95));
+            color: var(--text-dark);
+            box-shadow: inset 0 3px 12px rgba(102, 126, 234, 0.2), 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .sgpa-input input:focus {
+            outline: none;
+            border: 3px solid rgba(102, 126, 234, 0.8);
+            background: linear-gradient(145deg, rgba(255, 255, 255, 1), rgba(252, 254, 255, 1));
+            box-shadow: 0 0 0 5px rgba(102, 126, 234, 0.25), inset 0 3px 12px rgba(102, 126, 234, 0.15), 0 8px 25px rgba(102, 126, 234, 0.2);
+            transform: scale(1.08);
+        }
+
+        body.dark .sgpa-input input:focus {
+            background: linear-gradient(145deg, rgba(70, 70, 110, 1), rgba(60, 60, 100, 1));
+            box-shadow: 0 0 0 5px rgba(102, 126, 234, 0.35), inset 0 3px 12px rgba(102, 126, 234, 0.25), 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .sgpa-input input::placeholder {
+            color: rgba(102, 126, 234, 0.7);
+            font-weight: 500;
+            transition: all 0.4s ease;
+        }
+
+        body.dark .sgpa-input input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .sgpa-input input:focus::placeholder {
+            color: rgba(102, 126, 234, 0.9);
+            transform: translateX(10px) scale(1.05);
+        }
+
+        .sgpa-input .semester-label {
+            font-weight: 800;
+            font-size: 18px;
+            color: var(--text-light);
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            min-width: 140px;
+            text-align: center;
+            padding: 15px 20px;
+            border-radius: 18px;
+            background-color: rgba(102, 126, 234, 0.15);
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(102, 126, 234, 0.3);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        body.dark .sgpa-input .semester-label {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-color: rgba(79, 172, 254, 0.15);
+            border-color: rgba(79, 172, 254, 0.3);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.2);
+        }
+
+        .sgpa-input:hover .semester-label {
+            transform: scale(1.15) rotate(2deg);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .sgpa-input:focus-within .semester-label {
+            transform: scale(1.2) rotate(-1deg);
+            border-color: rgba(102, 126, 234, 0.7);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .remove-btn {
+            background: var(--secondary-gradient);
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 5px 15px rgba(240, 147, 251, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .remove-btn:hover {
+            transform: scale(1.15) rotate(-5deg);
+            box-shadow: 0 8px 25px rgba(240, 147, 251, 0.5);
+        }
+
+        .remove-btn:active {
+            transform: scale(1.05) rotate(-2deg);
+        }
+
+        .result {
+            background: var(--success-gradient);
+            color: white;
+            padding: 25px;
+            border-radius: 20px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(67, 233, 123, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(67, 233, 123, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(67, 233, 123, 0); }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .info-card {
+            background: var(--accent-gradient);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        .info-card h3 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+
+            .dark-mode-toggle {
+                position: relative;
+                margin-bottom: 20px;
+            }
+
+            .navigation {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .card {
+                padding: 25px;
+            }
+
+            .sgpa-input {
+                flex-direction: column;
+            }
+
+            .sgpa-input input {
+                min-width: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+        }
+
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .shape {
+            position: absolute;
+            background: var(--accent-gradient);
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="container">
+        <header class="header">
+            <button class="dark-mode-toggle" onclick="toggleDarkMode()">🌙 Dark Mode</button>
+            <h1>Smart & Futuristic CGPA Calculator</h1>
+            <p>Fast, accurate, and stylish – calculate your grades with ease.</p>
+        </header>
+
+        <nav class="navigation">
+            <button class="nav-btn active" onclick="showSection('cgpa')">CGPA Calculator</button>
+            <button class="nav-btn" onclick="showSection('converter')">CGPA to Percentage</button>
+            <button class="nav-btn" onclick="showSection('university')">University Systems</button>
+            <button class="nav-btn" onclick="showSection('info')">Help & Info</button>
+        </nav>
+
+        <section id="cgpa" class="section active">
+            <div class="card">
+                <h2 style="margin-bottom: 30px; font-size: 2rem; text-align: center;">Calculate Your CGPA</h2>
+                
+                <div id="sgpaInputs">
+                    <div class="sgpa-input">
+                        <div class="semester-label">📚 Semester 1</div>
+                        <input type="number" step="0.01" min="0" max="10" placeholder="Enter SGPA (e.g., 8.5)" class="sgpa-value">
+                        <button class="remove-btn" onclick="removeSGPA(this)" style="display: none;">Remove</button>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin: 30px 0;">
+                    <button class="btn btn-accent" onclick="addSGPA()">+ Add Another SGPA</button>
+                    <button class="btn btn-primary" onclick="calculateCGPA()">Calculate CGPA</button>
+                    <button class="btn btn-secondary" onclick="clearAll()">Clear All</button>
+                </div>
+
+                <div id="cgpaResult"></div>
+            </div>
+        </section>
+
+        <section id="converter" class="section">
+            <div class="card">
+                <h2 style="margin-bottom: 30px; font-size: 2rem; text-align: center;">CGPA to Percentage Converter</h2>
+                
+                <div class="form-group">
+                    <label for="cgpaInput">📊 Enter your CGPA:</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="cgpaInput" step="0.01" min="0" max="10" placeholder="Enter CGPA (e.g., 8.5)">
+                        <div class="input-icon">🎯</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="conversionMethod">⚙️ Conversion Method:</label>
+                    <div class="input-wrapper">
+                        <select id="conversionMethod">
+                            <option value="9.5">Standard Method (CGPA × 9.5)</option>
+                            <option value="10">Alternative Method (CGPA × 10)</option>
+                            <option value="custom">Custom Multiplier</option>
+                        </select>
+                        <div class="input-icon">🔧</div>
+                    </div>
+                </div>
+
+                <div class="form-group" id="customMultiplier" style="display: none;">
+                    <label for="customValue">🔢 Custom Multiplier:</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="customValue" step="0.1" min="1" max="20" placeholder="Enter custom multiplier">
+                        <div class="input-icon">✨</div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin: 30px 0;">
+                    <button class="btn btn-primary" onclick="convertToPercentage()">Convert to Percentage</button>
+                </div>
+
+                <div id="conversionResult"></div>
+            </div>
+        </section>
+
+        <section id="university" class="section">
+            <div class="card">
+                <h2 style="margin-bottom: 30px; font-size: 2rem; text-align: center;">University CGPA Systems</h2>
+                
+                <div class="form-group">
+                    <label for="universitySelect">🏫 Select University/System:</label>
+                    <div class="input-wrapper">
+                        <select id="universitySelect" onchange="updateUniversitySystem()">
+                            <option value="custom">Custom System</option>
+                            <optgroup label="🇮🇳 Indian Universities">
+                                <option value="vtu">VTU (Visvesvaraya Technological University)</option>
+                                <option value="anna">Anna University</option>
+                                <option value="mumbai">University of Mumbai</option>
+                                <option value="delhi">Delhi University</option>
+                                <option value="jntu">JNTU (Jawaharlal Nehru Technological University)</option>
+                                <option value="iit">IIT System</option>
+                                <option value="nit">NIT System</option>
+                            </optgroup>
+                            <optgroup label="🇺🇸 US Universities">
+                                <option value="us_standard">US Standard (4.0 Scale)</option>
+                                <option value="us_weighted">US Weighted (5.0 Scale)</option>
+                            </optgroup>
+                            <optgroup label="🇬🇧 UK Universities">
+                                <option value="uk_standard">UK Standard</option>
+                                <option value="cambridge">Cambridge University</option>
+                                <option value="oxford">Oxford University</option>
+                            </optgroup>
+                            <optgroup label="🇨🇦 Canadian Universities">
+                                <option value="canada_standard">Canadian Standard (4.0 Scale)</option>
+                                <option value="ubc">University of British Columbia</option>
+                            </optgroup>
+                            <optgroup label="🇦🇺 Australian Universities">
+                                <option value="australia_standard">Australian Standard (7.0 Scale)</option>
+                                <option value="unsw">UNSW Sydney</option>
+                            </optgroup>
+                        </select>
+                        <div class="input-icon">🌍</div>
+                    </div>
+                </div>
+
+                <div id="universityInfo" class="card" style="background: var(--accent-gradient); color: white; margin-top: 20px;">
+                    <h3>Select a university system to see details</h3>
+                </div>
+
+                <div class="form-group" style="margin-top: 30px;">
+                    <label for="uniCgpaInput">🎓 Enter your CGPA/GPA:</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="uniCgpaInput" step="0.01" min="0" max="10" placeholder="Enter your CGPA/GPA">
+                        <div class="input-icon">📈</div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin: 30px 0;">
+                    <button class="btn btn-primary" onclick="calculateUniversityConversion()">Calculate Conversion</button>
+                </div>
+
+                <div id="universityResult"></div>
+            </div>
+        </section>
+
+        <section id="info" class="section">
+            <div class="card">
+                <h2 style="margin-bottom: 30px; font-size: 2rem; text-align: center;">Help & Information</h2>
+                
+                <div class="grid">
+                    <div class="info-card">
+                        <h3>📊 What is CGPA?</h3>
+                        <p>CGPA (Cumulative Grade Point Average) represents your overall academic performance across all semesters. It's calculated by taking the average of all your SGPA values.</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>🔢 CGPA Formula</h3>
+                        <p>CGPA = (Sum of all SGPAs) ÷ (Number of Semesters)</p>
+                        <p style="margin-top: 10px; font-size: 0.9rem;">Example: If you have SGPAs of 8.5, 9.0, 8.8, then CGPA = (8.5 + 9.0 + 8.8) ÷ 3 = 8.77</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>📈 Percentage Conversion</h3>
+                        <p>Most universities use the formula: Percentage = CGPA × 9.5</p>
+                        <p style="margin-top: 10px; font-size: 0.9rem;">Some institutions may use different multipliers (×10 or custom values). Check with your university for the exact conversion method.</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>💡 Tips for Better Grades</h3>
+                        <p>• Maintain consistency across semesters<br>• Focus on understanding concepts<br>• Regular study schedule<br>• Seek help when needed<br>• Track your progress regularly</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        let sgpaCount = 1;
+
+        // University systems data
+        const universitySystems = {
+            vtu: {
+                name: "VTU (Visvesvaraya Technological University)",
+                scale: "10.0",
+                percentageFormula: "CGPA × 10 - 7.5",
+                gradeScale: {
+                    "9.0-10.0": "Outstanding (O)",
+                    "8.0-8.99": "Excellent (A+)",
+                    "7.0-7.99": "Very Good (A)",
+                    "6.0-6.99": "Good (B+)",
+                    "5.5-5.99": "Above Average (B)",
+                    "5.0-5.49": "Average (C)",
+                    "4.0-4.99": "Satisfactory (P)"
+                },
+                description: "VTU follows a 10-point grading system with specific percentage conversion formula."
+            },
+            anna: {
+                name: "Anna University",
+                scale: "10.0",
+                percentageFormula: "(CGPA - 0.75) × 10",
+                gradeScale: {
+                    "9.0-10.0": "Outstanding (O)",
+                    "8.0-8.99": "Excellent (A+)",
+                    "7.0-7.99": "Very Good (A)",
+                    "6.0-6.99": "Good (B+)",
+                    "5.5-5.99": "Above Average (B)",
+                    "5.0-5.49": "Average (C)"
+                },
+                description: "Anna University uses a 10-point CGPA system with letter grades."
+            },
+            mumbai: {
+                name: "University of Mumbai",
+                scale: "10.0",
+                percentageFormula: "CGPA × 9.5",
+                gradeScale: {
+                    "8.5-10.0": "First Class with Distinction",
+                    "6.0-8.49": "First Class",
+                    "5.0-5.99": "Second Class",
+                    "4.0-4.99": "Pass Class"
+                },
+                description: "Mumbai University follows the standard 10-point CGPA system."
+            },
+            delhi: {
+                name: "Delhi University",
+                scale: "10.0",
+                percentageFormula: "CGPA × 9.5",
+                gradeScale: {
+                    "9.0-10.0": "A+ (Outstanding)",
+                    "8.0-8.99": "A (Excellent)",
+                    "7.0-7.99": "B+ (Very Good)",
+                    "6.0-6.99": "B (Good)",
+                    "5.5-5.99": "C+ (Above Average)",
+                    "5.0-5.49": "C (Average)"
+                },
+                description: "DU uses a 10-point grading system with letter grades."
+            },
+            jntu: {
+                name: "JNTU (Jawaharlal Nehru Technological University)",
+                scale: "10.0",
+                percentageFormula: "(CGPA - 0.5) × 10",
+                gradeScale: {
+                    "9.0-10.0": "Outstanding (O)",
+                    "8.0-8.99": "Excellent (A+)",
+                    "7.0-7.99": "Very Good (A)",
+                    "6.0-6.99": "Good (B+)",
+                    "5.5-5.99": "Above Average (B)",
+                    "5.0-5.49": "Average (C)"
+                },
+                description: "JNTU follows a 10-point CGPA system with specific conversion formula."
+            },
+            iit: {
+                name: "IIT System",
+                scale: "10.0",
+                percentageFormula: "CGPA × 10 - 7.5",
+                gradeScale: {
+                    "9.0-10.0": "A+ (Excellent)",
+                    "8.0-8.99": "A (Very Good)",
+                    "7.0-7.99": "B+ (Good)",
+                    "6.0-6.99": "B (Fair)",
+                    "5.0-5.99": "C (Satisfactory)",
+                    "4.0-4.99": "D (Poor)"
+                },
+                description: "IIT system uses a 10-point scale with relative grading."
+            },
+            nit: {
+                name: "NIT System",
+                scale: "10.0",
+                percentageFormula: "CGPA × 10 - 7.5",
+                gradeScale: {
+                    "9.0-10.0": "A+ (Outstanding)",
+                    "8.0-8.99": "A (Excellent)",
+                    "7.0-7.99": "B+ (Very Good)",
+                    "6.0-6.99": "B (Good)",
+                    "5.5-5.99": "C+ (Above Average)",
+                    "5.0-5.49": "C (Average)"
+                },
+                description: "NIT follows a 10-point CGPA system similar to IIT."
+            },
+            us_standard: {
+                name: "US Standard (4.0 Scale)",
+                scale: "4.0",
+                percentageFormula: "GPA × 25 (approximate)",
+                gradeScale: {
+                    "3.7-4.0": "A (90-100%)",
+                    "3.3-3.69": "B+ (87-89%)",
+                    "3.0-3.29": "B (83-86%)",
+                    "2.7-2.99": "B- (80-82%)",
+                    "2.3-2.69": "C+ (77-79%)",
+                    "2.0-2.29": "C (73-76%)",
+                    "1.7-1.99": "C- (70-72%)",
+                    "1.3-1.69": "D+ (67-69%)",
+                    "1.0-1.29": "D (65-66%)"
+                },
+                description: "Standard US 4.0 GPA system used by most American universities."
+            },
+            us_weighted: {
+                name: "US Weighted (5.0 Scale)",
+                scale: "5.0",
+                percentageFormula: "GPA × 20 (approximate)",
+                gradeScale: {
+                    "4.5-5.0": "A+ in AP/Honors (97-100%)",
+                    "4.0-4.49": "A in AP/Honors (93-96%)",
+                    "3.5-3.99": "B+ in AP/Honors (87-92%)",
+                    "3.0-3.49": "B in AP/Honors (83-86%)",
+                    "2.5-2.99": "C+ in AP/Honors (77-82%)"
+                },
+                description: "Weighted GPA system that gives extra points for AP and Honors courses."
+            },
+            uk_standard: {
+                name: "UK Standard",
+                scale: "Various",
+                percentageFormula: "Classification based system",
+                gradeScale: {
+                    "70-100%": "First Class Honours (1st)",
+                    "60-69%": "Upper Second Class (2:1)",
+                    "50-59%": "Lower Second Class (2:2)",
+                    "40-49%": "Third Class Honours (3rd)",
+                    "35-39%": "Ordinary Degree"
+                },
+                description: "UK uses percentage-based classification system rather than GPA."
+            },
+            cambridge: {
+                name: "Cambridge University",
+                scale: "Various",
+                percentageFormula: "Tripos classification system",
+                gradeScale: {
+                    "Class I": "First Class (Distinction)",
+                    "Class II.1": "Upper Second Class",
+                    "Class II.2": "Lower Second Class",
+                    "Class III": "Third Class"
+                },
+                description: "Cambridge uses the traditional Tripos examination system."
+            },
+            oxford: {
+                name: "Oxford University",
+                scale: "Various",
+                percentageFormula: "Honours classification",
+                gradeScale: {
+                    "First": "First Class Honours (70%+)",
+                    "2:1": "Upper Second (60-69%)",
+                    "2:2": "Lower Second (50-59%)",
+                    "Third": "Third Class (40-49%)"
+                },
+                description: "Oxford uses the traditional UK honours classification system."
+            },
+            canada_standard: {
+                name: "Canadian Standard (4.0 Scale)",
+                scale: "4.0",
+                percentageFormula: "GPA × 25 (approximate)",
+                gradeScale: {
+                    "3.7-4.0": "A+ (90-100%)",
+                    "3.3-3.69": "A (85-89%)",
+                    "3.0-3.29": "A- (80-84%)",
+                    "2.7-2.99": "B+ (77-79%)",
+                    "2.3-2.69": "B (73-76%)",
+                    "2.0-2.29": "B- (70-72%)",
+                    "1.7-1.99": "C+ (67-69%)",
+                    "1.3-1.69": "C (63-66%)",
+                    "1.0-1.29": "C- (60-62%)"
+                },
+                description: "Standard Canadian 4.0 GPA system used by most Canadian universities."
+            },
+            ubc: {
+                name: "University of British Columbia",
+                scale: "4.33",
+                percentageFormula: "Percentage to GPA conversion",
+                gradeScale: {
+                    "4.0-4.33": "A+ (90-100%)",
+                    "3.7-3.99": "A (85-89%)",
+                    "3.3-3.69": "A- (80-84%)",
+                    "3.0-3.29": "B+ (76-79%)",
+                    "2.7-2.99": "B (72-75%)",
+                    "2.3-2.69": "B- (68-71%)",
+                    "2.0-2.29": "C+ (64-67%)",
+                    "1.7-1.99": "C (60-63%)"
+                },
+                description: "UBC uses a 4.33 scale with specific percentage conversions."
+            },
+            australia_standard: {
+                name: "Australian Standard (7.0 Scale)",
+                scale: "7.0",
+                percentageFormula: "GPA × 14.3 (approximate)",
+                gradeScale: {
+                    "6.5-7.0": "High Distinction (HD) 85-100%",
+                    "5.5-6.49": "Distinction (D) 75-84%",
+                    "4.5-5.49": "Credit (C) 65-74%",
+                    "4.0-4.49": "Pass (P) 50-64%",
+                    "0-3.99": "Fail (F) 0-49%"
+                },
+                description: "Standard Australian 7-point GPA system used by most universities."
+            },
+            unsw: {
+                name: "UNSW Sydney",
+                scale: "10.0",
+                percentageFormula: "WAM (Weighted Average Mark)",
+                gradeScale: {
+                    "8.5-10.0": "High Distinction (85-100%)",
+                    "7.0-8.49": "Distinction (75-84%)",
+                    "6.0-6.99": "Credit (65-74%)",
+                    "5.0-5.99": "Pass (50-64%)",
+                    "0-4.99": "Fail (0-49%)"
+                },
+                description: "UNSW uses a 10-point scale with WAM calculation system."
+            }
+        };
+
+        function toggleDarkMode() {
+            const body = document.body;
+            const btn = document.querySelector('.dark-mode-toggle');
+            
+            // Toggle the dark class
+            body.classList.toggle('dark');
+            
+            // Update button text and save preference
+            if (body.classList.contains('dark')) {
+                btn.textContent = '☀️ Light Mode';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                btn.textContent = '🌙 Dark Mode';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Load saved theme preference on page load
+        function loadThemePreference() {
+            const savedTheme = localStorage.getItem('theme');
+            const body = document.body;
+            const btn = document.querySelector('.dark-mode-toggle');
+            
+            // Apply saved theme or default to light
+            if (savedTheme === 'dark') {
+                body.classList.add('dark');
+                btn.textContent = '☀️ Light Mode';
+            } else {
+                body.classList.remove('dark');
+                btn.textContent = '🌙 Dark Mode';
+            }
+        }
+
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active class from all nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(sectionName).classList.add('active');
+
+            // Add active class to clicked nav button
+            event.target.classList.add('active');
+        }
+
+        function addSGPA() {
+            sgpaCount++;
+            const container = document.getElementById('sgpaInputs');
+            const newInput = document.createElement('div');
+            newInput.className = 'sgpa-input';
+            newInput.innerHTML = `
+                <div class="semester-label">📚 Semester ${sgpaCount}</div>
+                <input type="number" step="0.01" min="0" max="10" placeholder="Enter SGPA (e.g., 8.5)" class="sgpa-value">
+                <button class="remove-btn" onclick="removeSGPA(this)">Remove</button>
+            `;
+            container.appendChild(newInput);
+
+            // Show remove buttons if more than one input
+            if (sgpaCount > 1) {
+                document.querySelectorAll('.remove-btn').forEach(btn => {
+                    btn.style.display = 'block';
+                });
+            }
+        }
+
+        function removeSGPA(button) {
+            button.parentElement.remove();
+            sgpaCount--;
+
+            // Renumber all semester labels
+            const semesterLabels = document.querySelectorAll('.semester-label');
+            semesterLabels.forEach((label, index) => {
+                label.textContent = `📚 Semester ${index + 1}`;
+            });
+
+            // Hide remove buttons if only one input remains
+            if (sgpaCount <= 1) {
+                document.querySelectorAll('.remove-btn').forEach(btn => {
+                    btn.style.display = 'none';
+                });
+            }
+        }
+
+        function calculateCGPA() {
+            const sgpaInputs = document.querySelectorAll('.sgpa-value');
+            let totalSGPA = 0;
+            let validInputs = 0;
+
+            sgpaInputs.forEach(input => {
+                const value = parseFloat(input.value);
+                if (!isNaN(value) && value >= 0 && value <= 10) {
+                    totalSGPA += value;
+                    validInputs++;
+                }
+            });
+
+            const resultDiv = document.getElementById('cgpaResult');
+
+            if (validInputs === 0) {
+                resultDiv.innerHTML = '<div class="result" style="background: var(--secondary-gradient);">Please enter at least one valid SGPA value (0-10).</div>';
+                return;
+            }
+
+            const cgpa = (totalSGPA / validInputs).toFixed(2);
+            const percentage = (cgpa * 9.5).toFixed(2);
+
+            resultDiv.innerHTML = `
+                <div class="result">
+                    🎉 Your CGPA: <strong>${cgpa}</strong> 
+                    <button class="copy-btn" onclick="copyToClipboard('${cgpa}')">Copy</button>
+                    <br><br>
+                    📊 Equivalent Percentage: <strong>${percentage}%</strong>
+                    <button class="copy-btn" onclick="copyToClipboard('${percentage}%')">Copy</button>
+                    <br><br>
+                    <button class="btn btn-success" onclick="downloadResult('${cgpa}', '${percentage}')">📥 Download Result</button>
+                </div>
+            `;
+        }
+
+        function clearAll() {
+            document.getElementById('sgpaInputs').innerHTML = `
+                <div class="sgpa-input">
+                    <div class="semester-label">📚 Semester 1</div>
+                    <input type="number" step="0.01" min="0" max="10" placeholder="Enter SGPA (e.g., 8.5)" class="sgpa-value">
+                    <button class="remove-btn" onclick="removeSGPA(this)" style="display: none;">Remove</button>
+                </div>
+            `;
+            document.getElementById('cgpaResult').innerHTML = '';
+            sgpaCount = 1;
+        }
+
+        function convertToPercentage() {
+            const cgpa = parseFloat(document.getElementById('cgpaInput').value);
+            const method = document.getElementById('conversionMethod').value;
+            const resultDiv = document.getElementById('conversionResult');
+
+            if (isNaN(cgpa) || cgpa < 0 || cgpa > 10) {
+                resultDiv.innerHTML = '<div class="result" style="background: var(--secondary-gradient);">Please enter a valid CGPA (0-10).</div>';
+                return;
+            }
+
+            let multiplier = parseFloat(method);
+            if (method === 'custom') {
+                multiplier = parseFloat(document.getElementById('customValue').value);
+                if (isNaN(multiplier) || multiplier <= 0) {
+                    resultDiv.innerHTML = '<div class="result" style="background: var(--secondary-gradient);">Please enter a valid custom multiplier.</div>';
+                    return;
+                }
+            }
+
+            const percentage = (cgpa * multiplier).toFixed(2);
+
+            resultDiv.innerHTML = `
+                <div class="result">
+                    🎯 CGPA: <strong>${cgpa}</strong>
+                    <br><br>
+                    📈 Percentage: <strong>${percentage}%</strong>
+                    <button class="copy-btn" onclick="copyToClipboard('${percentage}%')">Copy</button>
+                    <br><br>
+                    <small>Conversion Method: CGPA × ${multiplier}</small>
+                    <br><br>
+                    <button class="btn btn-success" onclick="downloadConversionResult('${cgpa}', '${percentage}', '${multiplier}')">📥 Download Result</button>
+                </div>
+            `;
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Show temporary success message
+                const originalText = event.target.textContent;
+                event.target.textContent = 'Copied!';
+                event.target.style.background = 'rgba(67, 233, 123, 0.8)';
+                
+                setTimeout(() => {
+                    event.target.textContent = originalText;
+                    event.target.style.background = 'rgba(255, 255, 255, 0.2)';
+                }, 1000);
+            });
+        }
+
+        function downloadResult(cgpa, percentage) {
+            const content = `CGPA Calculation Result
+========================
+CGPA: ${cgpa}
+Percentage: ${percentage}%
+Conversion Method: CGPA × 9.5
+
+Generated by Smart & Futuristic CGPA Calculator
+Date: ${new Date().toLocaleDateString()}
+Time: ${new Date().toLocaleTimeString()}`;
+
+            downloadFile(content, `CGPA_Result_${cgpa}.txt`);
+        }
+
+        function downloadConversionResult(cgpa, percentage, multiplier) {
+            const content = `CGPA to Percentage Conversion
+============================
+CGPA: ${cgpa}
+Percentage: ${percentage}%
+Conversion Method: CGPA × ${multiplier}
+
+Generated by Smart & Futuristic CGPA Calculator
+Date: ${new Date().toLocaleDateString()}
+Time: ${new Date().toLocaleTimeString()}`;
+
+            downloadFile(content, `CGPA_Conversion_${cgpa}_to_${percentage}percent.txt`);
+        }
+
+        function downloadFile(content, filename) {
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Show/hide custom multiplier input
+        document.getElementById('conversionMethod').addEventListener('change', function() {
+            const customDiv = document.getElementById('customMultiplier');
+            if (this.value === 'custom') {
+                customDiv.style.display = 'block';
+            } else {
+                customDiv.style.display = 'none';
+            }
+        });
+
+        // Add enter key support for inputs
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const activeSection = document.querySelector('.section.active');
+                if (activeSection.id === 'cgpa') {
+                    calculateCGPA();
+                } else if (activeSection.id === 'converter') {
+                    convertToPercentage();
+                }
+            }
+        });
+
+        function updateUniversitySystem() {
+            const selectedSystem = document.getElementById('universitySelect').value;
+            const infoDiv = document.getElementById('universityInfo');
+            const cgpaInput = document.getElementById('uniCgpaInput');
+
+            if (selectedSystem === 'custom') {
+                infoDiv.innerHTML = '<h3>Custom System</h3><p>Select a specific university system to see detailed information about their grading scale and conversion formulas.</p>';
+                cgpaInput.placeholder = 'Enter your CGPA/GPA';
+                return;
+            }
+
+            const system = universitySystems[selectedSystem];
+            if (!system) return;
+
+            // Update input placeholder based on scale
+            cgpaInput.placeholder = `Enter your CGPA/GPA (0-${system.scale})`;
+            cgpaInput.max = system.scale;
+
+            // Generate grade scale HTML
+            let gradeScaleHTML = '<div style="margin-top: 15px;"><h4>📊 Grade Scale:</h4><ul style="list-style: none; padding: 0;">';
+            for (const [range, grade] of Object.entries(system.gradeScale)) {
+                gradeScaleHTML += `<li style="margin: 5px 0; padding: 8px; background: rgba(255,255,255,0.1); border-radius: 8px;">• <strong>${range}:</strong> ${grade}</li>`;
+            }
+            gradeScaleHTML += '</ul></div>';
+
+            infoDiv.innerHTML = `
+                <h3>🏫 ${system.name}</h3>
+                <p><strong>Scale:</strong> ${system.scale} Point System</p>
+                <p><strong>Conversion Formula:</strong> ${system.percentageFormula}</p>
+                <p><strong>Description:</strong> ${system.description}</p>
+                ${gradeScaleHTML}
+            `;
+        }
+
+        function calculateUniversityConversion() {
+            const selectedSystem = document.getElementById('universitySelect').value;
+            const cgpaValue = parseFloat(document.getElementById('uniCgpaInput').value);
+            const resultDiv = document.getElementById('universityResult');
+
+            if (selectedSystem === 'custom') {
+                resultDiv.innerHTML = '<div class="result" style="background: var(--secondary-gradient);">Please select a specific university system first.</div>';
+                return;
+            }
+
+            if (isNaN(cgpaValue) || cgpaValue < 0) {
+                resultDiv.innerHTML = '<div class="result" style="background: var(--secondary-gradient);">Please enter a valid CGPA/GPA value.</div>';
+                return;
+            }
+
+            const system = universitySystems[selectedSystem];
+            if (!system) return;
+
+            // Check if CGPA is within valid range
+            const maxScale = parseFloat(system.scale);
+            if (cgpaValue > maxScale) {
+                resultDiv.innerHTML = `<div class="result" style="background: var(--secondary-gradient);">CGPA/GPA cannot exceed ${maxScale} for ${system.name}.</div>`;
+                return;
+            }
+
+            // Calculate percentage based on system
+            let percentage = 0;
+            let conversionNote = '';
+
+            switch (selectedSystem) {
+                case 'vtu':
+                case 'iit':
+                case 'nit':
+                    percentage = (cgpaValue * 10) - 7.5;
+                    break;
+                case 'anna':
+                    percentage = (cgpaValue - 0.75) * 10;
+                    break;
+                case 'jntu':
+                    percentage = (cgpaValue - 0.5) * 10;
+                    break;
+                case 'mumbai':
+                case 'delhi':
+                    percentage = cgpaValue * 9.5;
+                    break;
+                case 'us_standard':
+                case 'canada_standard':
+                    percentage = cgpaValue * 25;
+                    conversionNote = 'Approximate conversion';
+                    break;
+                case 'us_weighted':
+                    percentage = cgpaValue * 20;
+                    conversionNote = 'Approximate conversion';
+                    break;
+                case 'ubc':
+                    percentage = cgpaValue * 23.08; // Approximate for 4.33 scale
+                    conversionNote = 'Approximate conversion';
+                    break;
+                case 'australia_standard':
+                    percentage = cgpaValue * 14.3;
+                    conversionNote = 'Approximate conversion';
+                    break;
+                case 'unsw':
+                    percentage = cgpaValue * 10; // Direct WAM conversion
+                    conversionNote = 'WAM system';
+                    break;
+                case 'uk_standard':
+                case 'cambridge':
+                case 'oxford':
+                    resultDiv.innerHTML = `
+                        <div class="result">
+                            🎓 ${system.name}
+                            <br><br>
+                            📊 Your Input: <strong>${cgpaValue}</strong>
+                            <br><br>
+                            ℹ️ This system uses classification rather than percentage conversion.
+                            <br>Please refer to the grade scale above for your classification.
+                            <br><br>
+                            <button class="btn btn-success" onclick="downloadUniversityResult('${selectedSystem}', '${cgpaValue}', 'Classification System')">📥 Download Result</button>
+                        </div>
+                    `;
+                    return;
+                default:
+                    percentage = cgpaValue * 9.5; // Default conversion
+            }
+
+            // Ensure percentage is not negative
+            percentage = Math.max(0, percentage);
+
+            // Find grade classification
+            let gradeClassification = 'Not Available';
+            for (const [range, grade] of Object.entries(system.gradeScale)) {
+                const [min, max] = range.split('-').map(val => parseFloat(val.replace('%', '')));
+                if (!isNaN(min) && !isNaN(max) && cgpaValue >= min && cgpaValue <= max) {
+                    gradeClassification = grade;
+                    break;
+                } else if (!isNaN(min) && isNaN(max) && cgpaValue >= min) {
+                    gradeClassification = grade;
+                    break;
+                }
+            }
+
+            resultDiv.innerHTML = `
+                <div class="result">
+                    🎓 ${system.name}
+                    <br><br>
+                    📊 Your CGPA/GPA: <strong>${cgpaValue}</strong>
+                    <button class="copy-btn" onclick="copyToClipboard('${cgpaValue}')">Copy</button>
+                    <br><br>
+                    📈 Equivalent Percentage: <strong>${percentage.toFixed(2)}%</strong>
+                    <button class="copy-btn" onclick="copyToClipboard('${percentage.toFixed(2)}%')">Copy</button>
+                    <br><br>
+                    🏆 Grade Classification: <strong>${gradeClassification}</strong>
+                    <br><br>
+                    <small>Formula: ${system.percentageFormula} ${conversionNote ? '(' + conversionNote + ')' : ''}</small>
+                    <br><br>
+                    <button class="btn btn-success" onclick="downloadUniversityResult('${selectedSystem}', '${cgpaValue}', '${percentage.toFixed(2)}')">📥 Download Result</button>
+                </div>
+            `;
+        }
+
+        function downloadUniversityResult(systemKey, cgpa, percentage) {
+            const system = universitySystems[systemKey];
+            const content = `University CGPA Conversion Result
+==================================
+University System: ${system.name}
+Scale: ${system.scale} Point System
+Conversion Formula: ${system.percentageFormula}
+
+Your Results:
+CGPA/GPA: ${cgpa}
+${percentage !== 'Classification System' ? `Percentage: ${percentage}%` : 'Classification: Based on grade scale'}
+
+Generated by Smart & Futuristic CGPA Calculator
+Date: ${new Date().toLocaleDateString()}
+Time: ${new Date().toLocaleTimeString()}`;
+
+            downloadFile(content, `${system.name.replace(/[^a-zA-Z0-9]/g, '_')}_CGPA_${cgpa}.txt`);
+        }
+
+        // Load theme immediately when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            loadThemePreference();
+        });
+
+        // Add some interactive animations on load
+        window.addEventListener('load', function() {
+            // Ensure theme is loaded
+            loadThemePreference();
+            
+            document.querySelectorAll('.card').forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(50px)';
+                    card.style.transition = 'all 0.6s ease';
+                    
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 100);
+                }, index * 200);
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97226fa2163c20c5',t:'MTc1NTY5ODYyOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
